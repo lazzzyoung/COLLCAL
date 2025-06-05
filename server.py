@@ -25,46 +25,7 @@
 #     return {"message": "Favicon not found"}
 
 
-# import requests
-# import urllib.parse
-# import json
-
-# url = "https://api.linkareer.com/graphql"
-
-# headers = {
-#     "User-Agent": "Mozilla/5.0",
-#     "Accept": "application/json",
-#     "Origin": "https://linkareer.com",
-#     "Referer": "https://linkareer.com/",
-# }
-
-# params = {
-#     "operationName": "ActivityList_Activities",
-#     "variables": urllib.parse.unquote(
-#         "%7B%22filterBy%22%3A%7B%22status%22%3A%22OPEN%22%2C%22activityTypeID%22%3A%223%22%7D%2C%22pageSize%22%3A20%2C%22page%22%3A1%2C%22activityOrder%22%3A%7B%22field%22%3A%22CREATED_AT%22%2C%22direction%22%3A%22DESC%22%7D%7D"
-#     ),
-#     "extensions": urllib.parse.unquote(
-#         "%7B%22persistedQuery%22%3A%7B%22version%22%3A1%2C%22sha256Hash%22%3A%2223b5c0dd9f7f00b35d76db2f2b1604a049b17a5b064c977a43a7258a2fe3d07b%22%7D%7D"
-#     ),
-# }
-
-# res = requests.get(url, headers=headers, params=params)
-
-# data = res.json()
-
-# # 응답 구조 전체 확인
-# print(json.dumps(data, indent=2, ensure_ascii=False))
-
-# # 데이터 키 확인
-# print("응답 data 내부 키들:", list(data.get("data", {}).keys()))
-
-# # 실제 리스트가 있는지 확인 후 출력
-# items = data.get("data", {}).get("gqlActivityListFromAdsByPlacementCode", [])
-# print(f"받아온 항목 수: {len(items)}")
-
-# for item in items:
-#     print(f"{item.get('title')} - {item.get('url')}")
-
+################################### total crawling
 # import requests
 # import json
 # from datetime import datetime
@@ -175,6 +136,8 @@
 #     print(f"접수 마감: {deadline}")
 #     print("-" * 40)
 
+
+###################################partial crawling
 import requests
 import json
 from datetime import datetime

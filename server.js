@@ -7,11 +7,12 @@ let connectDB = require('./database');
 let db;
 connectDB.then((client) => {
     db = client.db(process.env.DB_NAME)
+    console.log('Database connected');
     app.listen(process.env.PORT,()=>{
         console.log('Server is running');
-    }).catch((err) => {
-        console.log('Error starting server:', err);
     })
+}).catch((e) => {
+    console.log('Error starting server:', e);
 })
 
 

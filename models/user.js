@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 
 let db;
 connectDB.then((client) => {
-    db = client.db(process.env.DB_NAME); // DB 초기화
+    db = client.db(process.env.DB_NAME); 
 }).catch((err) => {
     console.error("Database connection failed:", err);
     throw { status: 500, message: "Database connection failed" };
@@ -35,8 +35,6 @@ exports.userRegister = async (body) => {
 
         await db.collection('users').insertOne({loginId,password :hashedPassword,email,phone});
         const user = await db.collection('users').findOne({email});
-        
-
         const result = await db.collection('profiles').insertOne({ 
             _id: user._id ,  
             schoolInfo 
@@ -47,6 +45,3 @@ exports.userRegister = async (body) => {
     }
 }
 
-// module.exports = {
-//     userRegister,
-// };

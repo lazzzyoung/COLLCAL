@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const err = require('./middlewares/errorHandler');
+const errorHandler = require('./middlewares/errorHandler');
 const cors =require('cors');
 
 
@@ -29,3 +29,7 @@ app.use(express.json());
 
 
 app.use('/auth',require('./routes/auth.js'));
+
+
+
+app.use(errorHandler);

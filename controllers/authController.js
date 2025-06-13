@@ -20,7 +20,6 @@ exports.register = async (req,res) =>{
             schoolInfo 
         } = req.body;
 
-        //유효성 검사(누락 정보 확인)
         if (
             !loginId||
             !password||
@@ -47,11 +46,11 @@ exports.register = async (req,res) =>{
             return res.status(409).json({ message: "이미 가입된 이메일 입니다." });
         }
 
-        // 비밀번호 해싱
+        
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-        // users 컬렉션에 저장
+        
         await db.collection('users').insertOne({ loginId, password: hashedPassword, email, phone });
 
         // profiles 컬렉션에 연동할 사용자 조회
@@ -72,7 +71,6 @@ exports.register = async (req,res) =>{
         return res.status(status).json({ message });
     }
 };
-
 
 exports.login = async (req, res) => {
     

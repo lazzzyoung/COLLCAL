@@ -1,10 +1,13 @@
 const express = require('express');
 const app = express();
 const err = require('./middlewares/errorHandler');
+const cors =require('cors');
 
 
 let connectDB = require('./database');
 let db;
+
+
 connectDB.then((client) => {
     db = client.db(process.env.DB_NAME)
     console.log('Database connected');
@@ -20,3 +23,9 @@ connectDB.then((client) => {
 app.get('/',(req,res)=>{
     res.send('Hello World');
 })
+
+app.use(cors());
+app.use(express.json());
+
+
+app.use('/auth',require('./routes/auth.js'));

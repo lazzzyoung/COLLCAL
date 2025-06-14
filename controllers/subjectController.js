@@ -127,8 +127,8 @@ exports.editSubject = async (req,res) =>{
             return res.status(400).json({ message: "카테고리를 선택해주세요." });
         }
         if (
-            !subject||
-            !credit||
+            !subject&&
+            !credit&&
             !gpa
         ) {
             console.log("Subject edit failed : 수정할 필드를 최소 하나는 입력해주세요.")
@@ -146,14 +146,16 @@ exports.editSubject = async (req,res) =>{
                 userId: new ObjectId(userId)
             });
         const updateFields = {};
-        if (subject) updateFields.subject = subject;
-        if (credit) updateFields.credit = credit;
-        if (gpa) updateFields.gpa = gpa;
+        
 
         if(!targetSubject) {
             console.log("존재하지 않는 과목입니다..")
             return res.status(400).json({message: "존재하지 않는 과목입니다."})
         } 
+
+        if (subject) updateFields.subject = subject;
+        if (credit) updateFields.credit = credit;
+        if (gpa) updateFields.gpa = gpa;
 
         await db.collection(collectionName).updateOne(
             { _id: new ObjectId(subjectId)},

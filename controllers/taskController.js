@@ -65,4 +65,72 @@ exports.postTask = async (req,res) =>{
     }
 }
 
+exports.editTask = async (req, res) =>{
+    try {
+        const userId = req.token.userId;
+        const {
+            taskId,
+            taskCategory,
+            title,
+            note,
+            status
+        } = req.body;
 
+        if(!taskId) {
+            console.log('task 고유 id 식별 실패.')
+            return res.status(400).json({ message: '수정하려는 task가 존재하지않습니다.'})
+        }
+        if(
+            !taskCategory&&
+            !title&&
+            !note&&
+            !status
+        ) {
+            console.log('Task edit failed: 수정할 필드를 최소 하나는 입력해주세요.')
+            return res.status(400).json({ message: '수정할 필드를 최소 하나는 입력해주세요.'})
+        }
+        const updateFields = {};
+        if(taskCategory) updateFields.taskCategory = taskCategory;
+        if(title) updateFields.title = title;
+        if(note) updateFields.note = note;
+        if(status) updateFields.status = status;
+
+        await db.collection('tasks').updateOne(
+            {_id: new ObjectId(taskId)},
+            {$set: updateFields}
+        );
+
+        console.log("task 정보 수정 완료")
+        return res.status(200).json({ message: '성공적으로 업데이트되었습니다.' });
+    } catch (error) {
+        console.error('task 수정 오류:', error);
+        res.status(500).json({ message: '서버 오류 발생' });
+    }
+}
+
+
+exports.deleteTask = async (req,res)=>{
+    try{
+        const userId = req.token.userId;
+        const taskId = req.query.taskId;
+
+        if(!taskId) {
+            console.log('task ID 누락');
+            return res.status(400).json({ message: '삭제하려는 task을 반드시 선택해주세요.'})
+        }
+        const result = await db.collection('tasks').deleteOne({
+                    _id : new ObjectId(taskId),
+                    userId : new ObjectId(userId)
+                })
+                if(result.deletedCount === 1){
+                    console.log('task 삭제 완료');
+                    return res.status(200).json({message: 'task 삭제 완료'})
+                } else {
+                    console.log('task 삭제 실패');
+                    return res.status(200).json({message: 'task 삭제 실패'})
+                }
+    } catch (error){
+        console.error('과목 삭제 오류:', error);
+        res.status(500).json({ message: '서버 오류 발생' });
+    }
+}

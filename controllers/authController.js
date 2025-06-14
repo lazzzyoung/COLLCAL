@@ -64,7 +64,7 @@ exports.register = async (req,res) =>{
                 university,
                 studentId,
                 major,
-                status
+                status //string
             }
             );
 

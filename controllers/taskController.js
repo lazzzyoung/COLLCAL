@@ -10,6 +10,28 @@ connectDB.then((client) => {
 });
 
 
+exports.getTask = async (req,res) =>{
+    try {const userId = req.token.userId;
+        
+        const tasks = await db.collection('tasks').find({userId: new ObjectId(userId)}).toArray();
+        if(tasks.length === 0){
+            console.log("조회 성공) 등록된 task 없음.")
+            return res.status(200).json({
+                message: "조회 성공) 등록된 task 없음.",
+                tasks: []
+            });
+        }
+
+        console.log("Task 조회 성공.");
+        return res.status(200).json({
+            message: "Task 조회 성공.",
+            tasks: tasks
+        })
+    } catch (error) {
+        console.error('task 조회 오류:', error);
+        res.status(500).json({ message: '서버 오류 발생' });
+    }
+}
 
 exports.postTask = async (req,res) =>{
     try{
@@ -42,4 +64,5 @@ exports.postTask = async (req,res) =>{
         return res.status(500).json({ message: "서버 오류가 발생했습니다." });
     }
 }
+
 

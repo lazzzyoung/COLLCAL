@@ -171,6 +171,7 @@ exports.editSubject = async (req,res) =>{
 
 exports.deleteSubject = async (req,res) =>{
     try{
+        const userId = req.token.userId;
         const subjectId = req.query.subjectId;
         const category = parseInt(req.query.category);
 
@@ -182,7 +183,6 @@ exports.deleteSubject = async (req,res) =>{
             return res.status(400).json({ message: "카테고리를 선택해주세요." });
         }
 
-        const userId = req.token.userId;
         
         const collectionName = categoryMap[category];
         if (!collectionName) {

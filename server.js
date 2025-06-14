@@ -3,6 +3,9 @@ const app = express();
 const errorHandler = require('./middlewares/errorHandler');
 const cors =require('cors');
 
+app.use(cors());
+app.use(express.json());
+
 
 let connectDB = require('./database');
 let db;
@@ -20,15 +23,14 @@ connectDB.then((client) => {
 
 
 
+
+
+
 app.get('/',(req,res)=>{
     res.send('Hello World');
 })
-
-app.use(cors());
-app.use(express.json());
-
-
 app.use('/auth',require('./routes/auth.js'));
+app.use('/profile',require('./routes/profile.js'));
 
 
 

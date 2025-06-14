@@ -10,6 +10,7 @@ connectDB.then((client) => {
     throw { status: 500, message: "Database connection failed" };
 });
 
+// 클라이언트로부터 로그인정보를 받아옴.
 exports.register = async (req,res) =>{
     try{
         const { 
@@ -17,7 +18,10 @@ exports.register = async (req,res) =>{
             password, 
             email, 
             phone, 
-            schoolInfo 
+            university,
+            studentId,
+            major,
+            status
         } = req.body;
 
         if (
@@ -25,10 +29,10 @@ exports.register = async (req,res) =>{
             !password||
             !email||
             !phone||
-            !schoolInfo?.university||
-            !schoolInfo?.studentId||
-            !schoolInfo?.major||
-            !schoolInfo?.grade
+            !university||
+            !studentId||
+            !major||
+            !status
         ) {
             console.log("Registration failed : 모든 필드값 입력 필요.")
             return res.status(400).json({message:"모든 필드를 입력해주세요."})
@@ -51,16 +55,20 @@ exports.register = async (req,res) =>{
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         
-        await db.collection('users').insertOne({ loginId, password: hashedPassword, email, phone });
+        await db.collection('users').insertOne(
+            {
+                loginId,
+                password: hashedPassword,
+                email,
+                phone,
+                university,
+                studentId,
+                major,
+                status
+            }
+            );
 
-        // profiles 컬렉션에 연동할 사용자 조회
-        const user = await db.collection('users').findOne({ email });
-
-        // schoolInfo는 profiles 컬렉션에 저장
-        await db.collection('profiles').insertOne({
-            _id: user._id,
-            schoolInfo
-        });
+    
 
         res.status(201).json({ message: '회원가입 성공' });
         

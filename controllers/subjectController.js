@@ -23,16 +23,13 @@ exports.getSubject = async (req,res) =>{
     try{
         const category = parseInt(req.query.category);
         const userId = req.token.userId;
-        const user = await db.collection('users').findOne({_id : new ObjectId(userId)});
+        
         
         if(category < 1 || category > 6){
             return res.status(400).json({ message: '유효하지 않은 카테고리입니다.' });
         }
         
-        if(!user) {
-            console.log("해당 유저를 찾을 수 없습니다.");
-            return res.status(404).json({ message: '사용자 정보를 찾을 수 없습니다.' });
-            }
+        
         const collectionName = categoryMap[category];
         if (!collectionName) {
             return res.status(400).json({ message: '존재하지 않는 카테고리입니다.' });
@@ -60,12 +57,7 @@ exports.postSubject = async (req, res) =>{
     try {
 
         const userId = req.token.userId;
-        const user = await db.collection('users').findOne({_id : new ObjectId(userId)});
         
-        if(!user) {
-            console.log("해당 유저를 찾을 수 없습니다.");
-            return res.status(404).json({ message: '사용자 정보를 찾을 수 없습니다.' });
-            }
         const {
             category,
             subject,
@@ -117,12 +109,7 @@ exports.postSubject = async (req, res) =>{
 exports.editSubject = async (req,res) =>{
     try {
         const userId = req.token.userId;
-        const user = await db.collection('users').findOne({_id : new ObjectId(userId)});
-            
-            if(!user) {
-                console.log("해당 유저를 찾을 수 없습니다.");
-                return res.status(404).json({ message: '사용자 정보를 찾을 수 없습니다.' });
-            }
+        
             
         const {
             subjectId,
@@ -140,8 +127,8 @@ exports.editSubject = async (req,res) =>{
             return res.status(400).json({ message: "카테고리를 선택해주세요." });
         }
         if (
-            !subject||
-            !credit||
+            !subject&&
+            !credit&&
             !gpa
         ) {
             console.log("Subject edit failed : 수정할 필드를 최소 하나는 입력해주세요.")
@@ -159,14 +146,16 @@ exports.editSubject = async (req,res) =>{
                 userId: new ObjectId(userId)
             });
         const updateFields = {};
-        if (subject) updateFields.subject = subject;
-        if (credit) updateFields.credit = credit;
-        if (gpa) updateFields.gpa = gpa;
+        
 
         if(!targetSubject) {
             console.log("존재하지 않는 과목입니다..")
             return res.status(400).json({message: "존재하지 않는 과목입니다."})
         } 
+
+        if (subject) updateFields.subject = subject;
+        if (credit) updateFields.credit = credit;
+        if (gpa) updateFields.gpa = gpa;
 
         await db.collection(collectionName).updateOne(
             { _id: new ObjectId(subjectId)},
@@ -184,6 +173,7 @@ exports.editSubject = async (req,res) =>{
 
 exports.deleteSubject = async (req,res) =>{
     try{
+        const userId = req.token.userId;
         const subjectId = req.query.subjectId;
         const category = parseInt(req.query.category);
 
@@ -195,13 +185,6 @@ exports.deleteSubject = async (req,res) =>{
             return res.status(400).json({ message: "카테고리를 선택해주세요." });
         }
 
-        const userId = req.token.userId;
-        const user = await db.collection('users').findOne({_id : new ObjectId(userId)});
-            
-        if(!user) {
-            console.log("해당 유저를 찾을 수 없습니다.");
-            return res.status(404).json({ message: '사용자 정보를 찾을 수 없습니다.' });
-        }
         
         const collectionName = categoryMap[category];
         if (!collectionName) {

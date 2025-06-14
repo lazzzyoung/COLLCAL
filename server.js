@@ -31,6 +31,7 @@ app.get('/',(req,res)=>{
 })
 app.use('/auth',require('./routes/auth.js'));
 app.use('/subject',require('./routes/subject.js'));
+app.use('/task',require('./routes/task.js'));
 
 
 

@@ -23,16 +23,13 @@ exports.getSubject = async (req,res) =>{
     try{
         const category = parseInt(req.query.category);
         const userId = req.token.userId;
-        const user = await db.collection('users').findOne({_id : new ObjectId(userId)});
+        
         
         if(category < 1 || category > 6){
             return res.status(400).json({ message: '유효하지 않은 카테고리입니다.' });
         }
         
-        if(!user) {
-            console.log("해당 유저를 찾을 수 없습니다.");
-            return res.status(404).json({ message: '사용자 정보를 찾을 수 없습니다.' });
-            }
+        
         const collectionName = categoryMap[category];
         if (!collectionName) {
             return res.status(400).json({ message: '존재하지 않는 카테고리입니다.' });
@@ -60,12 +57,7 @@ exports.postSubject = async (req, res) =>{
     try {
 
         const userId = req.token.userId;
-        const user = await db.collection('users').findOne({_id : new ObjectId(userId)});
         
-        if(!user) {
-            console.log("해당 유저를 찾을 수 없습니다.");
-            return res.status(404).json({ message: '사용자 정보를 찾을 수 없습니다.' });
-            }
         const {
             category,
             subject,
@@ -117,12 +109,7 @@ exports.postSubject = async (req, res) =>{
 exports.editSubject = async (req,res) =>{
     try {
         const userId = req.token.userId;
-        const user = await db.collection('users').findOne({_id : new ObjectId(userId)});
-            
-            if(!user) {
-                console.log("해당 유저를 찾을 수 없습니다.");
-                return res.status(404).json({ message: '사용자 정보를 찾을 수 없습니다.' });
-            }
+        
             
         const {
             subjectId,
@@ -196,12 +183,6 @@ exports.deleteSubject = async (req,res) =>{
         }
 
         const userId = req.token.userId;
-        const user = await db.collection('users').findOne({_id : new ObjectId(userId)});
-            
-        if(!user) {
-            console.log("해당 유저를 찾을 수 없습니다.");
-            return res.status(404).json({ message: '사용자 정보를 찾을 수 없습니다.' });
-        }
         
         const collectionName = categoryMap[category];
         if (!collectionName) {

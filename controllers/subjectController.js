@@ -9,33 +9,23 @@ connectDB.then((client) => {
     throw { status: 500, message: "Database connection failed" };
 });
 
-//category 는 int 형으로 1 = 전필, 2 = 전선, 3 = 전기, 4 = 교필, 5 = 배분이수, 6 = 자유이수 로 나뉨
+//category 는 int 형으로 0 = 전기, 1 = 전필, 2 = 전선, 3 = 교필, 4 = 배분이수, 5 = 자유이수 로 나뉨
 const categoryMap = {
-    1: 'coreMajor',
-    2: 'electiveMajor',
-    3: 'basicMajor',
-    4: 'coreLiberal',
-    5: 'electiveLiberal',
-    6: 'freeLiberal'
+    0: 'coreMajor',
+    1: 'electiveMajor',
+    2: 'basicMajor',
+    3: 'coreLiberal',
+    4: 'electiveLiberal',
+    5: 'freeLiberal'
 }
 
+
+//category 는 int 형으로 0 = 전기, 1 = 전필, 2 = 전선, 3 = 교필, 4 = 배분이수, 5 = 자유이수 로 나뉨
 exports.getSubject = async (req,res) =>{
     try{
-        const category = parseInt(req.query.category);
         const userId = req.token.userId;
-        
-        
-        if(category < 1 || category > 6){
-            return res.status(400).json({ message: '유효하지 않은 카테고리입니다.' });
-        }
-        
-        
-        const collectionName = categoryMap[category];
-        if (!collectionName) {
-            return res.status(400).json({ message: '존재하지 않는 카테고리입니다.' });
-        }
 
-        const subjects = await db.collection(collectionName).find({userId : new ObjectId(userId) }).toArray();
+        const subjects = await db.collection('subjects').find({userId : new ObjectId(userId) }).toArray();
         if (subjects.length === 0) {
             return res.status(200).json({
                 message: "등록된 과목이 없습니다.",
@@ -71,28 +61,26 @@ exports.postSubject = async (req, res) =>{
             !credit||
             !gpa
         ) {
-            console.log("GPA registeration failed : 모든 필드값 입력 필요")
+            console.log("Subject registeration failed : 모든 필드값 입력 필요")
             return res.status(400).json({message: "모든 필드를 입력해주세요."})
         }
 
-        const collectionName = categoryMap[category];
-        if (!collectionName) {
-            return res.status(400).json({ message: "유효하지 않은 카테고리입니다." });
-        }
 
-        const existSubject = await db.collection(collectionName).findOne({ 
+        const existSubject = await db.collection('subjects').findOne({ 
             userId : new ObjectId(userId),
+            category,
             subject 
         });
 
         if(!existSubject) {
-            await db.collection(collectionName).insertOne({
+            await db.collection('subjects').insertOne({
                 userId : new ObjectId(userId),
+                category,
                 subject,
                 credit,
                 gpa
             })
-            console.log(`${collectionName}에 ${subject} 과목 추가 완료.`)
+            console.log(`${'subjects'}에 ${subject} 과목 추가 완료.`)
             return res.status(200).json({message: "과목이 정상적으로 추가되었습니다."})
         } else {
             console.log("이미 등록된 과목은 추가할 수 없습니다.")
@@ -113,19 +101,12 @@ exports.editSubject = async (req,res) =>{
             
         const {
             subjectId,
-            category,
             subject,
             credit,
             gpa
         } = req.body;
         
-        if(!subjectId) {
-            console.log('과목 고유 id 식별 실패.')
-            return res.status(400).json({ message: '수정하려는 과목을 반드시 선택해주세요.'})
-        }
-        if (!category) {
-            return res.status(400).json({ message: "카테고리를 선택해주세요." });
-        }
+        
         if (
             !subject&&
             !credit&&
@@ -135,29 +116,25 @@ exports.editSubject = async (req,res) =>{
             return res.status(400).json({message: "수정할 필드를 최소 하나는 입력해주세요."})
         }
         
-        const collectionName = categoryMap[category];
-        if (!collectionName) {
-            return res.status(400).json({ message: "유효하지 않은 카테고리입니다." });
-        }
 
-        const targetSubject = await db.collection(collectionName).findOne(
+        const targetSubject = await db.collection('subjects').findOne(
             {
                 _id: new ObjectId(subjectId),
                 userId: new ObjectId(userId)
             });
-        const updateFields = {};
         
-
         if(!targetSubject) {
             console.log("존재하지 않는 과목입니다..")
             return res.status(400).json({message: "존재하지 않는 과목입니다."})
         } 
 
+        const updateFields = {};
+
         if (subject) updateFields.subject = subject;
         if (credit) updateFields.credit = credit;
         if (gpa) updateFields.gpa = gpa;
 
-        await db.collection(collectionName).updateOne(
+        await db.collection('subjects').updateOne(
             { _id: new ObjectId(subjectId)},
             { $set: updateFields }
         );
@@ -175,23 +152,19 @@ exports.deleteSubject = async (req,res) =>{
     try{
         const userId = req.token.userId;
         const subjectId = req.query.subjectId;
-        const category = parseInt(req.query.category);
 
-        if(!subjectId) {
-            console.log('과목 고유 id 식별 실패.')
-            return res.status(400).json({ message: '삭제하려는 과목을 반드시 선택해주세요.'})
-        }
-        if (!category) {
-            return res.status(400).json({ message: "카테고리를 선택해주세요." });
-        }
-
+        const targetSubject = await db.collection('subjects').findOne(
+            {
+                _id: new ObjectId(subjectId),
+                userId: new ObjectId(userId)
+            });
         
-        const collectionName = categoryMap[category];
-        if (!collectionName) {
-            return res.status(400).json({ message: "유효하지 않은 카테고리입니다." });
-        }
+        if(!targetSubject) {
+            console.log("존재하지 않는 과목입니다..")
+            return res.status(400).json({message: "존재하지 않는 과목입니다."})
+        } 
 
-        const result = await db.collection(collectionName).deleteOne({
+        const result = await db.collection('subjects').deleteOne({
             _id : new ObjectId(subjectId),
             userId : new ObjectId(userId)
         })
@@ -200,7 +173,7 @@ exports.deleteSubject = async (req,res) =>{
             return res.status(200).json({message: '과목 삭제 완료'})
         } else {
             console.log('과목 삭제 실패');
-            return res.status(200).json({message: '과목 삭제 실패'})
+            return res.status(400).json({message: '과목 삭제 실패'})
         }
         
     } catch (error){

@@ -67,9 +67,6 @@ exports.register = async (req,res) =>{
                 status //string
             }
             );
-
-    
-
         res.status(201).json({ message: '회원가입 성공' });
         
     } catch (err) {

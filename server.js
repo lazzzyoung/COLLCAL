@@ -15,7 +15,7 @@ let db;
 connectDB.then((client) => {
     db = client.db(process.env.DB_NAME)
     console.log('Database connected');
-    app.listen(process.env.TCP_PORT,'0.0.0.0',()=>{
+    app.listen(process.env.PORT,()=>{
         console.log('Server is running');
     })
 }).catch((e) => {

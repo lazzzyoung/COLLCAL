@@ -10,14 +10,14 @@ connectDB.then((client) => {
 });
 
 //category 는 int 형으로 0 = 전기, 1 = 전필, 2 = 전선, 3 = 교필, 4 = 배분이수, 5 = 자유이수 로 나뉨
-const categoryMap = {
-    0: 'coreMajor',
-    1: 'electiveMajor',
-    2: 'basicMajor',
-    3: 'coreLiberal',
-    4: 'electiveLiberal',
-    5: 'freeLiberal'
-}
+// const categoryMap = {
+//     0: 'coreMajor',
+//     1: 'electiveMajor',
+//     2: 'basicMajor',
+//     3: 'coreLiberal',
+//     4: 'electiveLiberal',
+//     5: 'freeLiberal'
+// }
 
 
 //category 는 int 형으로 0 = 전기, 1 = 전필, 2 = 전선, 3 = 교필, 4 = 배분이수, 5 = 자유이수 로 나뉨

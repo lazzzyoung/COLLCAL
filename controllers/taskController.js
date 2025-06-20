@@ -43,10 +43,7 @@ exports.postTask = async (req,res) =>{
             note,
         } = req.body;
 
-        if (
-            !taskCategory||
-            !title
-        ) {
+        if (!taskCategory) {
             console.log("Task registeration failed : 상세정보를 제외한 필드값 입력 필요")
             return res.status(400).json({message: "상세정보를 제외한 모든 필드를 입력해주세요."})
         }

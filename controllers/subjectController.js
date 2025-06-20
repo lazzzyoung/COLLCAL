@@ -56,9 +56,9 @@ exports.postSubject = async (req, res) =>{
         } = req.body;
 
         if (
-            !category||
+            category == null||
             !subject||
-            !credit||
+            credit == null||
             !gpa
         ) {
             console.log("Subject registeration failed : 모든 필드값 입력 필요")

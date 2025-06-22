@@ -11,6 +11,7 @@ connectDB.then((client) => {
     throw { status: 500, message: "Database connection failed" };
 });
 
+
 exports.getUser = async(req, res)=>{
     try{
         
@@ -28,6 +29,7 @@ exports.getUser = async(req, res)=>{
 
         return res.status(200).json({
             message: "유저 정보 불러오기 성공.",
+            userId,
             university: userInfo.university,
             studentId: userInfo.studentId,
             major: userInfo.major,

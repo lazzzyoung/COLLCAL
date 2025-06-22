@@ -137,6 +137,8 @@ exports.login = async (req, res) => {
         });
         
         console.log(token);
+        const userId = token.userId;
+        console.log(userId);
         return res.status(200).json({
         message: '로그인 성공',
         token,

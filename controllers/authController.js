@@ -14,7 +14,7 @@ connectDB.then((client) => {
 
 exports.getUser = async(req, res)=>{
     try{
-        console.log(token);
+        console.log(req.token);
         const userId = req.token.userId;
         console.log(userId)
          
@@ -136,9 +136,9 @@ exports.login = async (req, res) => {
         expiresIn: '3d',
         });
         
-        console.log(token);
         const userId = token.userId;
-        console.log(userId);
+        console.log("userId:", userId);
+        console.log("userId:", user._id);
         return res.status(200).json({
         message: '로그인 성공',
         token,

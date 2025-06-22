@@ -134,6 +134,7 @@ exports.login = async (req, res) => {
         expiresIn: '3d',
         });
         
+        console.log(token);
         return res.status(200).json({
         message: '로그인 성공',
         token,

@@ -14,8 +14,9 @@ connectDB.then((client) => {
 
 exports.getUser = async(req, res)=>{
     try{
-        
+        console.log(token);
         const userId = req.token.userId;
+        console.log(userId)
          
         const userInfo = await db.collection('users').findOne({ _id : new ObjectId(userId)})
         console.log(userInfo)
@@ -38,6 +39,7 @@ exports.getUser = async(req, res)=>{
         })
         
     } catch (error) {
+        console.log("token:", token);
         console.log("userId:", userId);  // undefined 인지 확인
         console.error('유저 정보 조회 오류:', error);
         res.status(500).json({ message: '서버 오류 발생' });

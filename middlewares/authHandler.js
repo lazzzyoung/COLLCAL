@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 function authHandler(req, res, next) {
     const authHeader = req.headers['authorization'];
-
+    console.log('Authorization:', req.headers['authorization']);
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({ message: '인증 토큰이 제공되지 않았습니다.' });
     }

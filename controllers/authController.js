@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const connectDB = require('../database');
+const { ObjectId } = require('mongodb');
 
 let db;
 connectDB.then((client) => {
@@ -9,6 +10,42 @@ connectDB.then((client) => {
     console.error("Database connection failed:", err);
     throw { status: 500, message: "Database connection failed" };
 });
+
+
+exports.getUser = async(req, res)=>{
+    try{
+        console.log(req.token);
+        const userId = req.token.userId;
+        console.log(userId)
+         
+        const userInfo = await db.collection('users').findOne({ _id : new ObjectId(userId)})
+        console.log(userInfo)
+        if(!userInfo) {
+            console.log("등록되지않은 유저 정보 요청")
+            return res.status(400).json({
+                message: "찾을 수 없는 유저입니다.",
+                userInfo: null
+            })
+        } 
+
+        return res.status(200).json({
+            message: "유저 정보 불러오기 성공.",
+            userId,
+            university: userInfo.university,
+            studentId: userInfo.studentId,
+            major: userInfo.major,
+            status: userInfo.status,
+
+        })
+        
+    } catch (error) {
+        console.log("token:", token);
+        console.log("userId:", userId);  // undefined 인지 확인
+        console.error('유저 정보 조회 오류:', error);
+        res.status(500).json({ message: '서버 오류 발생' });
+    }
+
+}
 
 // 클라이언트로부터 로그인정보를 받아옴.
 exports.register = async (req,res) =>{
@@ -99,6 +136,9 @@ exports.login = async (req, res) => {
         expiresIn: '3d',
         });
         
+        const userId = token.userId;
+        console.log("userId:", userId);
+        console.log("userId:", user._id);
         return res.status(200).json({
         message: '로그인 성공',
         token,

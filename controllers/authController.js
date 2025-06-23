@@ -104,6 +104,14 @@ exports.register = async (req,res) =>{
                 status //string
             }
             );
+        await db.collection('tasks').insertMany([
+            { userId : new ObjectId(userId),taskCategory : "학부연구생",title: "", note, status: 0},
+            { userId : new ObjectId(userId),taskCategory : "현장실습",title: "", note, status: 0},
+            { userId : new ObjectId(userId),taskCategory : "인턴",title: "", note, status: 0},
+            { userId : new ObjectId(userId),taskCategory : "전공연수",title: "", note, status: 0},
+            { userId : new ObjectId(userId),taskCategory : "경진대회",title: "", note, status: 0},
+            { userId : new ObjectId(userId),taskCategory : "한국어도우미",title: "", note, status: 0},
+            ]);
         res.status(201).json({ message: '회원가입 성공' });
         
     } catch (err) {

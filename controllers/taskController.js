@@ -77,20 +77,18 @@ exports.editTask = async (req, res) =>{
             console.log('task 고유 id 식별 실패.')
             return res.status(400).json({ message: '수정하려는 task가 존재하지않습니다.'})
         }
-        if(
-            !taskCategory&&
-            !title&&
-            !note&&
-            !status
-        ) {
-            console.log('Task edit failed: 수정할 필드를 최소 하나는 입력해주세요.')
-            return res.status(400).json({ message: '수정할 필드를 최소 하나는 입력해주세요.'})
-        }
+        
         const updateFields = {};
         if(taskCategory) updateFields.taskCategory = taskCategory;
         if(title) updateFields.title = title;
         if(note) updateFields.note = note;
-        if(status) updateFields.status = status;
+        if(status !== undefined) updateFields.status = status;
+
+
+        if(Object.keys(updateFields).length == 0) {
+            console.log('Task edit failed: 수정할 필드를 최소 하나는 입력해주세요.')
+            return res.status(400).json({ message: '수정할 필드를 최소 하나는 입력해주세요.'})
+        }
 
         await db.collection('tasks').updateOne(
             {_id: new ObjectId(taskId)},

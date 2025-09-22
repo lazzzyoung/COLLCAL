@@ -178,7 +178,7 @@ res = requests.post(url, headers=headers, json=payload)
 data = res.json()
 
 if "errors" in data:
-    print("❌ GraphQL 에러 발생:")
+    print("GraphQL 에러 발생:")
     for err in data["errors"]:
         print(f"- {err['message']}")
     exit()
